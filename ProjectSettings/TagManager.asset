@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Enemy
+  - Shoot
+  - HUD
+  - ManaBar
+  - LifeBar
+  - Choice1
+  - Choice2
+  - Choice3
+  - Choice1Text
+  - Choice2Text
+  - Choice3Text
+  - UpgradePopup
+  - GameManager
+  - EnemyText
+  - Time
+  - CameraBounds
+  - PlayerExtensions
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Blocking Layer
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: BG
+    uniqueID: 487345511
+    locked: 0
+  - name: Sprites
+    uniqueID: 2951642383
+    locked: 0
+  - name: UI
+    uniqueID: 810101897
+    locked: 0
