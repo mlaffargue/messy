@@ -13,12 +13,40 @@ namespace Messy
 
         public static GameManager GetGameManager()
         {
-            return GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+            return GameManager.instance;
         }
 
-        public static GameObject GetUpgradePopupGameObject()
+        public static EnemyManager GetEnemyManager()
         {
-            return GameObject.FindGameObjectWithTag("UpgradePopup");
+            return GameObject.FindGameObjectWithTag("EnemyManager").GetComponent<EnemyManager>();
+        }
+
+        public static UpgradePopup GetUpgradePopupGameObject()
+        {
+            return UpgradePopup.instance;
+        }
+
+        public static GameObject GetTreeFolderEnemies()
+        {
+            return GameObject.FindGameObjectWithTag("EnemiesFolder");
+        }
+
+        public static GameObject GetTreeFolderShoots()
+        {
+            return GameObject.FindGameObjectWithTag("ShootsFolder");
+        }
+        public static GameObject GetTreeFolderNotifications()
+        {
+            return GameObject.FindGameObjectWithTag("NotificationsFolder");
+        }
+        public static GameObject GetTreeFolderSounds()
+        {
+            return GameObject.FindGameObjectWithTag("SoundsFolder");
+        }
+
+        public static GameObject GetTreeFolderXPs()
+        {
+            return GameObject.FindGameObjectWithTag("XPsFolder");
         }
     }
 }

@@ -15,53 +15,102 @@ namespace Messy
 
         // Components
         private Rigidbody2D rb;
-        private SpriteRenderer spriteRenderer;
 
         // Movement
         private float horizontal;
         private float vertical;
         private float diagonalSpeedLimit = 0.83f;
 
-        // Timers
-        private float nextShootTime;
-
-        [System.NonSerialized]
-        public int currentLevel = 1;
-        [System.NonSerialized]
-        public int currentXP = 0;
-        [System.NonSerialized]
+        // Calculated Attributes
+        private int currentLevel = 1;
+        private int currentXP = 0;
         private float currentLife;
 
+        private List<PlayerExtension> extensions = new List<PlayerExtension>();
 
-
-        // Enhanceable
+        // Enhanceable Attributes
         [SerializeField]
         private float moveSpeed = 20f;
         [SerializeField]
-        private float shootFrequency = .4f;
-        [SerializeField]
         private float maxLife = 100f;
-        [SerializeField]
-        private float baseDamage = 100f;
-        [SerializeField]
-        private float recoil = 1f;
-        [SerializeField]
-        private int traversableEnemy = 1;
         [SerializeField]
         private float xpAbsorptionDist = 5f;
         [SerializeField]
-        private float criticalChance = .05f;
-        [SerializeField]
-        private float criticalFactor = 1.4f;
+        private float rotationSpeed = 1f;
 
 
         // Start is called before the first frame update
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
-            spriteRenderer = GetComponent<SpriteRenderer>();
             gameManager = Camera.main.GetComponentInChildren<GameManager>();
             currentLife = maxLife;
+
+            AddExtension(ExtensionEnum.Pistol);
+        }
+
+
+        private void OnTriggerStay2D(Collider2D collision)
+        {
+            if (collision.tag == "Enemy" && collision.GetComponent<Enemy>() != null)
+            {
+                currentLife -= collision.GetComponent<Enemy>().GetDamage();
+            }
+        }
+
+        public int GetNextLevelXP()
+        {
+            // Formula from Runescape simplified
+            //return (int) (100 * (Math.Pow(2, (double)(currentLevel) / 7) - 1));
+            return (int)(60 * (Math.Pow(2, (double)(currentLevel) / 8) - 1)) + 5;
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            horizontal = Input.GetAxisRaw("Horizontal");
+            vertical = Input.GetAxisRaw("Vertical");
+
+            // Check borders
+            float heightSeen = Camera.main.orthographicSize * 2.0f;
+            float widthSeen = heightSeen * Camera.main.aspect;
+
+            if (
+                (transform.position.x - transform.localScale.x < -(widthSeen / 2) && horizontal < 0)
+                || (transform.position.x + transform.localScale.x > widthSeen / 2) && horizontal > 0)
+            {
+                horizontal = 0;
+            }
+
+            if (
+                (transform.position.y - transform.localScale.y < -(heightSeen / 2) && vertical < 0)
+                || (transform.position.y + transform.localScale.y > heightSeen / 2) && vertical > 0)
+            {
+                vertical = 0;
+            }
+        }
+
+        void FixedUpdate()
+        {
+            if (horizontal != 0 && vertical != 0)
+            { // Diagonal
+                horizontal *= diagonalSpeedLimit;
+                vertical *= diagonalSpeedLimit;
+            }
+
+            rb.velocity = new Vector2(horizontal * moveSpeed, vertical * moveSpeed);
+            rb.rotation += rotationSpeed;
+        }
+
+        public void AddExtension(ExtensionEnum extensionEnum)
+        {
+            // Create the extension
+            ExtensionPlacementEnum placement = (ExtensionPlacementEnum)Enum.ToObject(typeof(ExtensionPlacementEnum), extensions.Count);
+
+            PlayerExtension playerExtension = PlayerExtension.Create(extensionEnum, PlayerExtension.GetExtensionPlacement(placement));
+            playerExtension.transform.parent = transform;
+
+            extensions.Add(playerExtension);
         }
 
         public void GainXP(int amount)
@@ -77,122 +126,48 @@ namespace Messy
             }
         }
 
-        private void OnTriggerStay2D(Collider2D collision)
+        public void GainWeapon()
         {
-            if (collision.tag == "Enemy")
-            {
-                currentLife -= collision.GetComponent<Enemy>().GetDamage();
-            }
-        }
-
-        public int GetNextLevelXP()
-        {
-            // Formula from Runescape simplified
-            return (int) (100 * (Math.Pow(2, (double)(currentLevel) / 7) - 1));
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            horizontal = Input.GetAxisRaw("Horizontal");
-            vertical = Input.GetAxisRaw("Vertical");
-
-            // Check borders
-            float heightSeen = Camera.main.orthographicSize * 2.0f;
-            float widthSeen = heightSeen * Camera.main.aspect;
-
-            if (
-                (transform.position.x - spriteRenderer.bounds.size.x < -(widthSeen / 2) && horizontal < 0)
-                || (transform.position.x + spriteRenderer.bounds.size.x > widthSeen / 2) && horizontal > 0)
-            {
-                horizontal = 0;
-            }
-
-            if (
-                (transform.position.y - spriteRenderer.bounds.size.y < -(heightSeen / 2) && vertical < 0)
-                || (transform.position.y + spriteRenderer.bounds.size.y > heightSeen / 2) && vertical > 0)
-            {
-                vertical = 0;
-            }
-
-            if (Time.time > nextShootTime) {
-                PlayerShoot();
-            }
-            
-        }
-
-        void FixedUpdate()
-        {
-            if (horizontal != 0 && vertical != 0)
-            { // Diagonal
-                horizontal *= diagonalSpeedLimit;
-                vertical *= diagonalSpeedLimit;
-            }
-
-            rb.velocity = new Vector2(horizontal * moveSpeed, vertical * moveSpeed);
-
+            gameManager.UpgradeWeapon = true;
         }
 
 
-        private void PlayerShoot()
-        {
-
-            GameObject closestEnemy = Enemy.FindClosestEnemy(transform.position);
-            if (closestEnemy != null)
-            {
-                Vector2 shootAimVector = closestEnemy.transform.position - transform.position;
-                bool shootIsCritical = false;
-                float shootDamage = (int)baseDamage;
-
-                // Critical ?
-                if (UnityEngine.Random.Range(0f, 1f) < criticalChance)
-                {
-                    shootDamage = (int)(baseDamage * criticalFactor);
-                    shootIsCritical = true;
-                }
-
-                // Randomize a bit shoot damage
-                shootDamage *= UnityEngine.Random.Range(0.8f, 1.2f);
-
-                // Generate shoot
-                Shoot.Create(transform.position, shootAimVector, recoil, traversableEnemy, shootDamage, shootIsCritical);
-            }
-            nextShootTime = Time.time + shootFrequency;
-        }
-
-        public void ApplyUpgrade(UpgradesEnum upgradesEnum)
+        public void ApplyUpgrade(Enum upgradesEnum)
         {
             switch (upgradesEnum)
             {
-                case UpgradesEnum.PlayerAbsorbDistance:
+                case EnhancementEnum.PlayerAbsorbDistance:
                     XpAbsorptionDist += 1;
                     break;
-                case UpgradesEnum.PlayerMaxLife:
+                case EnhancementEnum.PlayerMaxLife:
                     maxLife += 10;
                     break;
-                case UpgradesEnum.PlayerMoveSpeed:
-                    moveSpeed += moveSpeed * 0.2f;
+                case EnhancementEnum.PlayerMoveSpeed:
+                    moveSpeed += moveSpeed * 0.05f;
                     break;
-                case UpgradesEnum.ShootDamage:
-                    baseDamage *= 1.1f;
+                case WeaponEnum.Pistol:
+                    AddExtension(ExtensionEnum.Pistol);
                     break;
-                case UpgradesEnum.ShootCriticalDamage:
-                    criticalFactor += .1f;
+                case WeaponEnum.Rifle:
+                    AddExtension(ExtensionEnum.Rifle);
                     break;
-                case UpgradesEnum.ShootCriticalFrequency:
-                    criticalChance *= 1.2f;
+                case WeaponEnum.RocketLauncher:
+                    AddExtension(ExtensionEnum.RocketLauncher);
                     break;
-                case UpgradesEnum.ShootRecoil:
-                    recoil += 1f;
-                    break;
-                case UpgradesEnum.ShootSpeed:
-                    shootFrequency -= shootFrequency*0.2f;
-                    break;
-                case UpgradesEnum.ShootTraversal:
-                    traversableEnemy += 1;
+                case WeaponEnum.Shotgun:
+                    AddExtension(ExtensionEnum.Shotgun);
                     break;
                 default:
-                    throw new NotImplementedException("Unknown upgrade : " + upgradesEnum);
+                    ApplyUpgradeToExtensions(upgradesEnum);
+                    break;
+            }
+        }
+
+        private void ApplyUpgradeToExtensions(Enum upgradesEnum)
+        {
+            foreach (PlayerExtension extension in extensions)
+            {
+                extension.ApplyUpgrade(upgradesEnum);
             }
         }
 
@@ -201,6 +176,8 @@ namespace Messy
         public float XpAbsorptionDist { get => xpAbsorptionDist; set => xpAbsorptionDist = value; }
         public float CurrentLife { get => currentLife; set => currentLife = value; }
         public float MaxLife { get => maxLife; set => maxLife = value; }
-        public float Recoil { get => recoil; set => recoil = value; }
+        public int CurrentLevel { get => currentLevel; set => currentLevel = value; }
+        public int CurrentXP { get => currentXP; set => currentXP = value; }
+        public float CurrentLife1 { get => currentLife; set => currentLife = value; }
     }
 }

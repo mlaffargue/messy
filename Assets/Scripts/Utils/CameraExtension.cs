@@ -14,5 +14,13 @@ namespace Messy
                 new Vector3(cameraHeight * screenAspect, cameraHeight, 0));
             return bounds;
         }
+
+        public static Vector3 ClosestBoundPoint(this Camera camera, Vector3 point)
+        {
+            Bounds cameraBounds = Camera.main.OrthographicBounds();
+            cameraBounds.size *= 1.1f;
+
+            return cameraBounds.ClosestPoint(point);
+        }
     }
 }

@@ -8,7 +8,8 @@ namespace Messy
     public enum EnemyEnum
     {
         Chaser,
-        Swarm
+        Swarm,
+        Boss1
     }
 
     public static class EnemyEnumHelper

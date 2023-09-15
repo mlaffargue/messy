@@ -413,7 +413,7 @@ GameObject:
   - component: {fileID: 8700813035189667707}
   - component: {fileID: 5014524152544835493}
   - component: {fileID: 958093098437976085}
-  - component: {fileID: 4546518756249515947}
+  - component: {fileID: 8589237338865045363}
   m_Layer: 5
   m_Name: Choice2
   m_TagString: Choice2
@@ -479,7 +479,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4546518756249515947
+--- !u!114 &8589237338865045363
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -488,7 +488,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1107952587551438180}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a802d06472349ef468e393e036c43277, type: 3}
+  m_Script: {fileID: 11500000, guid: e67511309ccb1f74a8634a2425219f4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1245426841050353116
@@ -637,7 +637,7 @@ GameObject:
   - component: {fileID: 1245426841160935351}
   - component: {fileID: 1245426841160935344}
   - component: {fileID: 1245426841160935345}
-  - component: {fileID: 216104617}
+  - component: {fileID: 7251513572984396939}
   m_Layer: 5
   m_Name: Upgrade Popup
   m_TagString: UpgradePopup
@@ -675,8 +675,8 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 1
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
+  m_Camera: {fileID: 1823090511401156741, guid: 386a7e1a969b64d4596445ead34417a6, type: 3}
+  m_PlaneDistance: 1
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -726,7 +726,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &216104617
+--- !u!114 &7251513572984396939
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -735,7 +735,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1245426841160935346}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11730a12326102049a148da3283590d1, type: 3}
+  m_Script: {fileID: 11500000, guid: f13991acbb050694aab21e4617a74e8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1245426841599906192
@@ -828,7 +828,7 @@ GameObject:
   - component: {fileID: 4266034370964004913}
   - component: {fileID: 5765316930469340382}
   - component: {fileID: 7980884919751479885}
-  - component: {fileID: 7675716769686309165}
+  - component: {fileID: 371810620238479354}
   m_Layer: 5
   m_Name: Choice1
   m_TagString: Choice1
@@ -894,7 +894,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7675716769686309165
+--- !u!114 &371810620238479354
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -903,7 +903,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1789903758225846389}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a802d06472349ef468e393e036c43277, type: 3}
+  m_Script: {fileID: 11500000, guid: e67511309ccb1f74a8634a2425219f4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3933028326712759556
@@ -917,7 +917,7 @@ GameObject:
   - component: {fileID: 216089908457114210}
   - component: {fileID: 7549298129559154127}
   - component: {fileID: 6683649331072427847}
-  - component: {fileID: 2366928076749586844}
+  - component: {fileID: 6342868539312399937}
   m_Layer: 5
   m_Name: Choice3
   m_TagString: Choice3
@@ -983,7 +983,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2366928076749586844
+--- !u!114 &6342868539312399937
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -992,6 +992,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 3933028326712759556}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a802d06472349ef468e393e036c43277, type: 3}
+  m_Script: {fileID: 11500000, guid: e67511309ccb1f74a8634a2425219f4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

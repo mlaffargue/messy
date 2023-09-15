@@ -8,30 +8,34 @@ namespace Messy
     {
         // Components
         protected Rigidbody2D rb;
+        protected Renderer rend;
         protected Player player;
         protected TMPro.TextMeshPro text;
 
         // Attributes
-        protected int level = 1;
+        protected float level = 1;
         protected float lifepoint = 100f;
         protected float moveSpeed = 5f;
         protected float timeBetweenDamage = 0.2f;
 
         // Behaviour
         protected Vector2 currentVelocity;
+        protected Quaternion rotation = Quaternion.identity;
         protected Vector2 nextDirection;
         protected Vector2 recoilVector = new Vector2(0f, 0f);
         private float lastDamageGiven = -1;
 
 
-        public static Enemy Create(Vector2 position, float level, EnemyEnum enemyType)
+        public static Enemy Create(Vector2 position, EnemyEnum enemyType)
         {
             GameObject enemyInstance = Instantiate(EnemyEnumHelper.GetPrefab(enemyType),
                                 position,
-                                Quaternion.identity, Camera.main.transform);
+                                EnemyEnumHelper.GetPrefab(enemyType).transform.rotation, ObjectRetriever.GetTreeFolderEnemies().transform);
+
             Enemy enemy = enemyInstance.GetComponent<Enemy>();
-            enemy.Level = (int)level;
-            enemy.Lifepoint *= level;
+            float level = ObjectRetriever.GetGameManager().CurrentLevel;
+            enemy.Level = level;
+            enemy.Lifepoint = level * 2;
 
             return enemy;
         }
@@ -62,6 +66,7 @@ namespace Messy
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
+            rend = GetComponent<Renderer>();
             currentVelocity = rb.velocity;
             player = ObjectRetriever.GetPlayer();
             text = gameObject.GetComponentInChildren<TMPro.TextMeshPro>();
@@ -69,37 +74,61 @@ namespace Messy
             ChildStart();
         }
 
-        public void TakeDamage(Shoot shoot)
+        public virtual void TakeDamage(Shoot shoot)
         {
             lifepoint -= shoot.Damage;
-            recoilVector += shoot.GetComponent<Rigidbody2D>().velocity * shoot.Recoil;
+            Rigidbody2D shootRb = shoot.GetComponent<Rigidbody2D>();
+            if (shootRb != null)
+            {
+                recoilVector += shootRb.velocity * shoot.Recoil;
+            }
             DamagePopup.Create(transform.position, shoot.Damage, shoot.AimVector.normalized * 20f, shoot.IsCritical);
+            TakeDamageAudio();
+        }
+
+        protected virtual void TakeDamageAudio()
+        {
+            AudioSource audioSource = AudioSourceHelper.PlayClipAt(GameAssets.i.soundBulletImpact, transform.position, 0.5f);
         }
 
         // Update is called once per frame
         protected void Update()
         {
-            //text.text = "" + lifepoint;
+            if (text != null)
+            {
+                text.text = "" + lifepoint;
+            }
 
             if (lifepoint <= 0)
             {
-                if (Random.Range(1,10) > 5)
-                {
-                    GameObject xpInstance = Instantiate(GameAssets.i.xpPrefab, transform.position, Quaternion.identity, transform.parent);
-                    xpInstance.GetComponent<Xp>().Amount = GetXPValue() * level;
+                Destroyed();
+                GameObject enemyExplosionInstance = Instantiate<GameObject>(GameAssets.i.enemyExplosion, transform.position, Quaternion.identity, ObjectRetriever.GetTreeFolderEnemies().transform);
+                ParticleSystem.MainModule settings = enemyExplosionInstance.GetComponent<ParticleSystem>().main;
+                if (rend is SpriteRenderer) {
+                    SpriteRenderer sr = rend as SpriteRenderer;
+                    settings.startColor = new ParticleSystem.MinMaxGradient(sr.color);
                 }
 
                 Destroy(gameObject);
             }
 
             nextDirection = GetNextDirection();
+            //transform.localRotation = Quaternion.LookRotation(nextDirection);
+
+            ChildUpdate();
         }
 
         protected void FixedUpdate()
         {
-            rb.velocity = nextDirection + recoilVector;
+            
+            rb.velocity = (nextDirection + recoilVector / (rb.mass/5));
+
             currentVelocity = rb.velocity;
-            recoilVector = Vector2.SmoothDamp(recoilVector, new Vector2(0f, 0f), ref currentVelocity, .07f);
+            if (recoilVector != Vector2.zero)
+            {
+                recoilVector = Vector2.SmoothDamp(recoilVector, new Vector2(0f, 0f), ref currentVelocity, .07f);
+            }
+
         }
 
         protected abstract Vector3 GetNextDirection();
@@ -118,10 +147,17 @@ namespace Messy
 
         protected abstract int GetSpecificDamage();
         protected virtual void ChildStart() { }
+        protected virtual void ChildUpdate() { }
 
+        protected virtual void Destroyed()
+        {
+            if (Random.Range(1, 11) > 5)
+            {
+                Xp.Create(transform.position, GetXPValue());
+            }
+        }
 
-
-        protected int Level { get => level; set => level = value; }
+        protected float Level { get => level; set => level = value; }
         protected float Lifepoint { get => lifepoint; set => lifepoint = value; }
         protected float MoveSpeed { get => moveSpeed; set => moveSpeed = value; }
         protected float TimeBetweenDamage { get => timeBetweenDamage; set => timeBetweenDamage = value; }

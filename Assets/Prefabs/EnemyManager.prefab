@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6171995073086690707}
   m_Layer: 0
   m_Name: EnemyManager
-  m_TagString: Untagged
+  m_TagString: EnemyManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -43,8 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5684a1f127f65304388456982f6c3c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyObject: {fileID: 6060789281193656950, guid: 27f69d7e41316a645a3064805cdd62b6, type: 3}
   player: {fileID: -1963903975577983007, guid: a3c4bb0751ed39041a249d3b060ccb87, type: 3}
-  yieldTimeMin: 2
-  yieldTimeMax: 5
-  baseSpawnTime: 5
+  baseSpawnRate: 2
+  swarmSpawnRate: 45

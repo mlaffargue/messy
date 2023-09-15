@@ -37,7 +37,7 @@ namespace Messy
         // Update is called once per frame
         void Update()
         {
-            text.text = TimeSpan.FromSeconds(Time.time - gameManager.StartTime).ToString("mm\\:ss");
+            text.text = TimeSpan.FromSeconds(gameManager.TimeForClock).ToString("mm\\:ss");
         }
     }
 }

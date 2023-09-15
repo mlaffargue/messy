@@ -16,7 +16,7 @@ namespace Messy
 
         public static DamagePopup Create(Vector3 position, float amount, Vector3 shootDirection, bool isCritical)
         {
-            GameObject damagePopupInstance = Instantiate(GameAssets.i.damagePopupPrefab, position, Quaternion.identity);
+            GameObject damagePopupInstance = Instantiate(GameAssets.i.damagePopupPrefab, position, Quaternion.identity, ObjectRetriever.GetTreeFolderNotifications().transform);
             DamagePopup damagePopup = damagePopupInstance.GetComponent<DamagePopup>();
 
             damagePopup.Setup(amount, shootDirection, isCritical);

@@ -43,14 +43,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53c75653e1270cd41b1ed4159c5e2cc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 6060789281193656950, guid: 27f69d7e41316a645a3064805cdd62b6, type: 3}
   enemyManagerPrefab: {fileID: 4256430528219368554, guid: ca567597e876ca448b4cfe187d8d7b3a, type: 3}
   gameManagerPrefab: {fileID: 3320187512679769555, guid: b3ddaa823c1310f419d8019fac486230, type: 3}
   playerPrefab: {fileID: 3481578609588795620, guid: a3c4bb0751ed39041a249d3b060ccb87, type: 3}
-  shootPrefab: {fileID: 2830832842833255046, guid: fa09853bf7eb8284db9fc20154ff56d4, type: 3}
   xpPrefab: {fileID: 8940070991699299397, guid: 31dba2655d94be64fbc8fb9e9c36acc0, type: 3}
+  weaponLootPrefab: {fileID: 8940070991699299397, guid: d46e122fcddcf8b43895652a2dbeb6e1, type: 3}
   hudPrefab: {fileID: 9055180628168038321, guid: ed7c7ee402032564eafcb424fabb75cb, type: 3}
   damagePopupPrefab: {fileID: 3683374859818805945, guid: 23daddbe22850784eb46c8e5accad0b2, type: 3}
   upgradePopupPrefab: {fileID: 1245426841160935346, guid: dcdd6cf1269ff484f97540cc3b406265, type: 3}
+  koopaHammerShootPrefab: {fileID: 2830832842833255046, guid: b020f6f4b4ac56840a53f16be2a22ce5, type: 3}
+  laserShootPrefab: {fileID: 2830832842833255046, guid: ed214722732c72b419f2408a877b13e3, type: 3}
+  pistolShootPrefab: {fileID: 2830832842833255046, guid: fa09853bf7eb8284db9fc20154ff56d4, type: 3}
+  rocketShootPrefab: {fileID: 2830832842833255046, guid: 1b47c52c504937f4e8d1153087d32589, type: 3}
+  rocketShootExplosionPrefab: {fileID: 1290715649332758, guid: 4a86f62f57f52b348a2f80127fc50a2e, type: 3}
+  chaserPrefab: {fileID: 6060789281193656950, guid: 27f69d7e41316a645a3064805cdd62b6, type: 3}
+  swarmPrefab: {fileID: 6060789281193656950, guid: 75b27a3799c347f48a501de0f45aa8fa, type: 3}
+  enemyExplosion: {fileID: 5700202347723403696, guid: aeba895d7e2aa8c43ae5df2ca3ac752e, type: 3}
+  boss1Prefab: {fileID: 6060789281193656950, guid: 264b94c91802abc49a5abd16421ca2a7, type: 3}
+  boss1CrownPartPrefab: {fileID: 6060789281193656950, guid: bbbc22aafae2de142baa137a9ace9ca1, type: 3}
+  laserTargetting: {fileID: 8791218867012868029, guid: f006f45ed69e17b42a47134e59490c62, type: 3}
+  koopaHammerPrefab: {fileID: 3481578609588795620, guid: 61bc39d28b6ef1a4ea1a5f725e26846e, type: 3}
+  laserPrefab: {fileID: 3481578609588795620, guid: 60053c14225af5e43bc03e8cebb08ad3, type: 3}
+  pistolPrefab: {fileID: 3481578609588795620, guid: c54b68ddbe6ec2e4f9492b2bba5f6012, type: 3}
+  riflePrefab: {fileID: 3481578609588795620, guid: 87d30bbf7aae2134fb6c6c2179dc1b08, type: 3}
+  rocketLauncherPrefab: {fileID: 3481578609588795620, guid: fe2972eb58f0505478c96b355a5ed85c, type: 3}
+  shotgunPrefab: {fileID: 3481578609588795620, guid: 152ec124239e70b498b5da74c7eb9adb, type: 3}
   damagePopupFontMaterial: {fileID: 2100000, guid: b427581c0cb98434abc8bfab2f443e36, type: 2}
   damagePopupCriticalFontMaterial: {fileID: 2100000, guid: 3adb350409be8b14d8272588b90e3ca4, type: 2}
+  soundPistol: {fileID: 8300000, guid: 0637d89140ab1464d9ffb150c4e13fb9, type: 3}
+  soundRifle: {fileID: 8300000, guid: e35e70969df1fe24bbe164597953f314, type: 3}
+  soundShotgun: {fileID: 8300000, guid: 0637d89140ab1464d9ffb150c4e13fb9, type: 3}
+  soundBulletImpact: {fileID: 8300000, guid: 3291aab3e3dfac2409825169ce7b32a6, type: 3}
+  soundXP: {fileID: 8300000, guid: 680363a2563299a4da7c67fa3627e7ea, type: 3}

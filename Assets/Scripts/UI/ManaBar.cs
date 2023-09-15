@@ -8,7 +8,7 @@ namespace Messy
     public class ManaBar : MonoBehaviour
     {
         [SerializeField]
-        private Image mask;
+        private Image mask = null;
 
         private Player player;
 
@@ -27,7 +27,7 @@ namespace Messy
 
         void GetCurrentFill()
         {
-            float fillAmount = (float)player.currentXP / (float)player.GetNextLevelXP();
+            float fillAmount = (float)player.CurrentXP / (float)player.GetNextLevelXP();
             mask.fillAmount = fillAmount;
         }
     }

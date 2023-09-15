@@ -8,7 +8,7 @@ namespace Messy
     public class LifeBar : MonoBehaviour
     {
         [SerializeField]
-        private Image mask;
+        private Image mask = null;
 
         private Player player;
 

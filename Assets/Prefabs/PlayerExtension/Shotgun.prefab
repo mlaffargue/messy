@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1069368932231726507}
   m_Layer: 6
   m_Name: Shotgun
-  m_TagString: Player
+  m_TagString: PlayerExtensions
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -144,3 +144,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 284aba39617ae5049b83bc430ee56b52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseDamage: 100
+  criticalChance: 0.05
+  criticalFactor: 1.4
+  recoil: 1
+  shootFrequency: 0.6
+  traversableEnemy: 1

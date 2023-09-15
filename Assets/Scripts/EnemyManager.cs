@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Messy
@@ -8,87 +9,134 @@ namespace Messy
     {
         public Player player;
 
-        public float baseSpawnRate = 5f;
-        public float swarmSpawnRate = 45f;
+        private static readonly float defaultChaserSpawnRate = 5f;
+        private static readonly float defaultSwarmSpawnRate = 25f;
+        private static readonly float defaultBoss1SpawnRate = 60f;
 
-        private float lastSpawnTime=-5000;
-        private float lastSwarmTime = -5000;
+        private IDictionary<EnemyEnum, float> enemySpawnManager = new Dictionary<EnemyEnum, float>();
 
 
-        private Vector3 viewportSize;
+        private List<Boss1> boss1List = new List<Boss1>();
+
         void Start()
         {
-            Camera mainCam = Camera.main;
-            viewportSize = mainCam.ViewportToWorldPoint(new Vector3(mainCam.rect.width, mainCam.rect.height, 0));
+            enemySpawnManager.Add(EnemyEnum.Chaser, -1f); // First chaser immediately
+            enemySpawnManager.Add(EnemyEnum.Swarm, 65f); // First Swarm after first boss
+            enemySpawnManager.Add(EnemyEnum.Boss1, defaultBoss1SpawnRate);
             player = ObjectRetriever.GetPlayer();
             StartCoroutine(Spawn());
+        }
+
+        public bool IsBossAlive()
+        {
+            return IsBoss1Alive();
+        }
+
+        public bool IsBoss1Alive()
+        {
+            boss1List.RemoveAll(item => item == null);
+            return boss1List.Count > 0;
+        }
+        private void Update()
+        {
+            if (!IsBossAlive())
+            {
+                foreach (KeyValuePair<EnemyEnum, float> entry in enemySpawnManager.ToList())
+                {
+                    enemySpawnManager[entry.Key] = entry.Value - Time.deltaTime;
+                }
+            }
         }
 
         public IEnumerator Spawn()
         {
             while (true)
             {
-                float currentLevel = ObjectRetriever.GetGameManager().currentLevel;
+                float currentLevel = ObjectRetriever.GetGameManager().CurrentLevel;
+                if (!IsBoss1Alive() && enemySpawnManager[EnemyEnum.Boss1] < 0)
+                {
+                    enemySpawnManager[EnemyEnum.Boss1] = defaultBoss1SpawnRate;
+                    SpawnBoss1(Mathf.FloorToInt(currentLevel /60f));
+                }
 
-                Debug.Log(currentLevel);
-                SpawnDefault(currentLevel);
-                SpawnSwarm(currentLevel);
+                if (enemySpawnManager[EnemyEnum.Chaser] < 0)
+                {
+                    SpawnChaser();
+
+                    float chaserRespawnRate = defaultChaserSpawnRate;
+                    if (currentLevel < 60)
+                    {
+                        chaserRespawnRate = defaultChaserSpawnRate * (currentLevel+20) / 60f;
+                    }
+                    Debug.Log(chaserRespawnRate);
+                    enemySpawnManager[EnemyEnum.Chaser] = chaserRespawnRate;
+                }
+                if (enemySpawnManager[EnemyEnum.Swarm] < 0)
+                {
+                    SpawnSwarm();
+                    enemySpawnManager[EnemyEnum.Swarm] = defaultSwarmSpawnRate;
+                }
 
                 yield return null;
             }
         }
 
-        private void SpawnDefault(float currentLevel)
+        public void SpawnBoss1(int crowns)
         {
-            if (Time.time - lastSpawnTime > baseSpawnRate)
+            Vector2 enemyPos = CircleUtil.GetPointOnCircle(Vector2.zero, Random.Range(0f, 360f)) * 1.4f * ObjectRetriever.GetGameManager().ViewportSize.x;
+
+            // Project on camera border
+            enemyPos = Camera.main.ClosestBoundPoint(enemyPos);
+            Boss1 boss1 = Boss1.Create(enemyPos, crowns);
+            boss1List.Add(boss1);
+        }
+
+        private void SpawnChaser()
+        {
+            float currentLevel = ObjectRetriever.GetGameManager().CurrentLevel;
+
+            int spawner = Random.Range(1, 3);
+            int numberToSpawn = (int)(currentLevel / 10f);
+            numberToSpawn = Mathf.Max(4, numberToSpawn);
+
+            switch (spawner)
             {
-                lastSpawnTime = Time.time;
 
-                int spawner = Random.Range(1, 2);
-                switch (spawner)
-                {
-
-                    // Spiral
-                    case 1:
-                        StartCoroutine(SpawnCircle((int)currentLevel * 2, 1 / currentLevel, currentLevel, EnemyEnum.Chaser));
-                        break;
+                // Spiral
+                case 1:
+                    float waitTime = Mathf.Max(.5f, 1 / currentLevel);
+                    StartCoroutine(SpawnCircle(numberToSpawn, waitTime, EnemyEnum.Chaser));
+                    break;
 
 
-                    // Circle
-                    case 2:
-                    default:
-                        StartCoroutine(SpawnCircle((int)currentLevel * 2, 0f, currentLevel, EnemyEnum.Chaser));
-                        break;
-                }
+                // Circle
+                case 2:
+                default:
+                    StartCoroutine(SpawnCircle(numberToSpawn, 0f, EnemyEnum.Chaser));
+                    break;
             }
         }
 
-        private void SpawnSwarm(float currentLevel)
+        private void SpawnSwarm()
         {
-            if (Time.time - lastSwarmTime > swarmSpawnRate)
-            {
-                lastSwarmTime = Time.time;
-                StartCoroutine(SpawnRandom((int)currentLevel * 50, 0f, currentLevel, EnemyEnum.Swarm));
-            }
+            float currentLevel = ObjectRetriever.GetGameManager().CurrentLevel;
+            StartCoroutine(SpawnRandom(Mathf.FloorToInt(currentLevel /10f), 0f, EnemyEnum.Swarm));
         }
 
-        public IEnumerator SpawnRandom(int number, float waitTime, float level, EnemyEnum enemyType)
+        public IEnumerator SpawnRandom(int number, float waitTime, EnemyEnum enemyType)
         {
             int instanciated = 0;
             while (instanciated < number)
             {
                 Vector2 enemyPos = Vector2.zero;
                 while (enemyPos.x == 0 && enemyPos.y == 0) {
-                    enemyPos = Random.insideUnitCircle.normalized * 2 * viewportSize.x;
+                    enemyPos = Random.insideUnitCircle.normalized * 1.4f * ObjectRetriever.GetGameManager().ViewportSize.x;
                 }
 
                 // Project on camera border
-                Bounds cameraBounds = Camera.main.OrthographicBounds();
-                cameraBounds.size *= 1.1f;
+                enemyPos = Camera.main.ClosestBoundPoint(enemyPos);
 
-                enemyPos = cameraBounds.ClosestPoint(enemyPos);
-
-                Enemy.Create(enemyPos, level, enemyType);
+                Enemy.Create(enemyPos, enemyType);
                 instanciated++;
 
                 if (waitTime != 0f)
@@ -99,22 +147,22 @@ namespace Messy
             yield return null;
         }
 
-        public IEnumerator SpawnCircle(int number, float waitTime, float level, EnemyEnum enemyType)
+        public IEnumerator SpawnCircle(int number, float waitTime, EnemyEnum enemyType)
         {
             int angle = 0;
             int firstAngle = Random.Range(0, 359);
-            while (angle < 360)
+            int instanciated = 0;
+            while (instanciated < number)
             {   
-                Vector2 enemyPos = GetPointOnCircle(player.transform.position, firstAngle + angle) * 2 * viewportSize.x;
-                // Project on camera border
-                Bounds cameraBounds = Camera.main.OrthographicBounds();
-                cameraBounds.size *= 1.1f;
+                Vector2 enemyPos = CircleUtil.GetPointOnCircle(Vector2.zero, firstAngle + angle) * 1.3f * ObjectRetriever.GetGameManager().ViewportSize.x;
 
-                enemyPos = cameraBounds.ClosestPoint(enemyPos);
+                // Project on camera border
+                //enemyPos = Camera.main.ClosestBoundPoint(enemyPos);
 
                 angle += 360 / number;
 
-                Enemy.Create(enemyPos, level, enemyType);
+                Enemy.Create(enemyPos, enemyType);
+                instanciated++;
 
                 if (waitTime != 0f)
                 {
@@ -122,15 +170,6 @@ namespace Messy
                 }
             }
             yield return null;
-        }
-
-        Vector2 GetPointOnCircle(Vector2 center, int a)
-        {
-            float ang = a;
-            Vector2 pos;
-            pos.x = center.x + Mathf.Sin(ang * Mathf.Deg2Rad);
-            pos.y = center.y + Mathf.Cos(ang * Mathf.Deg2Rad);
-            return pos;
         }
     }
 }

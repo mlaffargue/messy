@@ -7,32 +7,32 @@ namespace Messy
 {
     public class Rifle : PlayerExtension
     {
-
-        // Timers
-        private float nextShootTime;
-
-        // Start is called before the first frame update
-        void Start()
+        protected override void ChildStart()
         {
-
+            ShootFrequency /= 3;
+            baseDamage /= 2;
         }
 
-        // Update is called once per frame
-        void Update()
+        protected override void Shoot()
         {
-            if (Time.time > nextShootTime)
-            {
-                ShotgunShoot();
-            }
-        }
 
-        private void ShotgunShoot()
-        {
-            GameObject closestEnemy = Enemy.FindClosestEnemy(transform.position);
-            if (closestEnemy != null)
-            {
+            Vector2 shootAimVector = transform.position - player.transform.position;
+            bool shootIsCritical = false;
+            float shootDamage = (int)baseDamage;
 
+            // Critical ?
+            if (UnityEngine.Random.Range(0f, 1f) < criticalChance)
+            {
+                shootDamage = (int)(baseDamage * criticalFactor);
+                shootIsCritical = true;
             }
+
+            // Randomize a bit shoot damage
+            shootDamage *= UnityEngine.Random.Range(0.8f, 1.2f);
+
+            // Generate shoot
+            PistolShoot.Create(transform.position, shootAimVector, recoil, traversableEnemy, shootDamage, shootIsCritical);
+            AudioSource audioSource = AudioSourceHelper.PlayClipAt(GameAssets.i.soundRifle, transform.position, 0.3f);
         }
     }
 }

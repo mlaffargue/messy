@@ -11,18 +11,53 @@ namespace Messy
         public GameObject enemyManagerPrefab;
         public GameObject gameManagerPrefab;
         public GameObject playerPrefab;
-        public GameObject shootPrefab;
         public GameObject xpPrefab;
+        public GameObject weaponLootPrefab;
         public GameObject hudPrefab;
         public GameObject damagePopupPrefab;
         public GameObject upgradePopupPrefab;
+
+        // Ammo
+        public GameObject koopaHammerShootPrefab;
+        public GameObject laserShootPrefab;
+        public GameObject pistolShootPrefab;
+        public GameObject rocketShootPrefab;
+        public GameObject rocketShootExplosionPrefab;
+
+        // Animation
+        public GameObject targetAcquiredAnimation;
 
         // Enemies
         public GameObject chaserPrefab;
         public GameObject swarmPrefab;
 
+        public GameObject enemyExplosion;
+
+        // Bosses
+        public GameObject boss1Prefab;
+        public GameObject boss1CrownPartPrefab;
+
+        // Misc
+        public GameObject laserTargetting;
+
+        // Extensions
+        public GameObject koopaHammerPrefab;
+        public GameObject laserPrefab;
+        public GameObject pistolPrefab;
+        public GameObject riflePrefab;
+        public GameObject rocketLauncherPrefab;
+        public GameObject shotgunPrefab;
+
         public Material damagePopupFontMaterial;
         public Material damagePopupCriticalFontMaterial;
+
+        // Sounds
+        public AudioClip soundPistol;
+        public AudioClip soundRifle;
+        public AudioClip soundShotgun;
+        public AudioClip soundBulletImpact;
+        public AudioClip soundXP;
+
 
         void Awake()
         {

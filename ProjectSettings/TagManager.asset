@@ -21,6 +21,15 @@ TagManager:
   - Time
   - CameraBounds
   - PlayerExtensions
+  - EnemyManager
+  - LootXP
+  - LootWeapon
+  - SoundManager
+  - ShootsFolder
+  - EnemiesFolder
+  - SoundsFolder
+  - NotificationsFolder
+  - XPsFolder
   layers:
   - Default
   - TransparentFX
